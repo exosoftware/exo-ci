@@ -7,6 +7,9 @@ pip config list
 oca_install_addons__deps_and_addons_path
 setup_addons_path
 
+echo $ADDONS_PATH
+echo ${ADDONS_PATH}
+
 # show what we have installed
 pip freeze
 

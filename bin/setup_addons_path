@@ -2,7 +2,7 @@
 
 ADDONS_PATH="/opt/odoo/addons"
 
-ls opt/odoo
+ls /opt/odoo
 
 if [ -d "/opt/odoo/odoo-enterprise" ]; then
     ADDONS_PATH="${ADDONS_PATH},/opt/odoo/odoo-enterprise"
