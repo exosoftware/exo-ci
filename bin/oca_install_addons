@@ -6,16 +6,6 @@ pip config list
 
 oca_install_addons__deps_and_addons_path
 
-ADDONS_PATH="/opt/odoo/addons"
-
-if [ -d "/opt/odoo/odoo-enterprise" ]; then
-    ADDONS_PATH="${ADDONS_PATH},/opt/odoo/odoo-enterprise"
-fi
-
-if [ -d "/opt/odoo/portugal-plus" ]; then
-    ADDONS_PATH="${ADDONS_PATH},/opt/odoo/portugal-plus"
-fi
-
 # show what we have installed
 pip freeze
 
