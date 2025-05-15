@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ADDONS_PATH="/opt/odoo/addons"
+
+if [ -d "/opt/odoo/odoo-enterprise" ]; then
+    ADDONS_PATH="${ADDONS_PATH},/opt/odoo/odoo-enterprise"
+fi
+
+if [ -d "/opt/odoo/portugal-plus" ]; then
+    ADDONS_PATH="${ADDONS_PATH},/opt/odoo/portugal-plus"
+fi
+
+export ADDONS_PATH
