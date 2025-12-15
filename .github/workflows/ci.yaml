@@ -14,44 +14,60 @@ jobs:
   main:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 16
       fail-fast: false
       matrix:
         include:
           # odoo/odoo
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 126
             odoo_version: "16.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo16.0
-            odoo_config_setting: "--config-setting=editable_mode=compat"
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 139
             odoo_version: "17.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo17.0
-            odoo_config_setting: "--config-setting=editable_mode=compat"
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 139
             odoo_version: "18.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo18.0
-            odoo_config_setting: "--config-setting=editable_mode=compat"
+          - python_version: "3.10"
+            codename: jammy
+            chrome_milestone: 139
+            odoo_version: "19.0"
+            odoo_org_repo: "odoo/odoo"
+            image_name: py3.10-odoo19.0
           # oca/ocb
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 126
             odoo_version: "16.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb16.0
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 139
             odoo_version: "17.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb17.0
           - python_version: "3.10"
             codename: jammy
+            chrome_milestone: 139
             odoo_version: "18.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb18.0
+          - python_version: "3.10"
+            codename: jammy
+            chrome_milestone: 139
+            odoo_version: "19.0"
+            odoo_org_repo: "oca/ocb"
+            image_name: py3.10-ocb19.0
     services:
       postgres:
         image: postgres:12
@@ -75,11 +91,10 @@ jobs:
         with:
           build-args: |
             codename=${{ matrix.codename }}
+            chrome_milestone=${{ matrix.chrome_milestone }}
             python_version=${{ matrix.python_version }}
             odoo_version=${{ matrix.odoo_version }}
             odoo_org_repo=${{ matrix.odoo_org_repo }}
-            setuptools_constraint=${{ matrix.setuptools_constraint }}
-            odoo_config_setting=${{ matrix.odoo_config_setting }}
           tags: |
             ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest
           labels: |
@@ -93,6 +108,8 @@ jobs:
         run: docker run -v ${PWD}/tests:/mnt/tests --network=host -e PGHOST=localhost ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest /mnt/tests/runtests.sh -v
         # Don't bother with Odoo 8 and 9 for now...
         if: ${{ matrix.odoo_version != '8.0' && matrix.odoo_version != '9.0' }}
+      - name: Chrome version
+        run: docker run ghcr.io/oca/oca-ci/${{ matrix.image_name }}:latest /opt/chrome-linux64/chrome --version
       - name: Push image
         uses: docker/build-push-action@v6
         with:
@@ -101,8 +118,6 @@ jobs:
             python_version=${{ matrix.python_version }}
             odoo_version=${{ matrix.odoo_version }}
             odoo_org_repo=${{ matrix.odoo_org_repo }}
-            setuptools_constraint=${{ matrix.setuptools_constraint }}
-            odoo_config_setting=${{ matrix.odoo_config_setting }}
           tags: |
             ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest
           labels: |
