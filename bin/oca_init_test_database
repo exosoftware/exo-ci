@@ -16,6 +16,7 @@ else
 fi
 
 unbuffer $(which odoo) \
+  --without-demo all \
   -d ${PGDATABASE} \
   -i ${ADDONS:-base} \
   --http-interface=127.0.0.1 \
