@@ -15,8 +15,14 @@ else
     ADDONS=$(manifestoo --select-addons-dir ${ADDONS_DIR} --select-exclude "${EXCLUDE}" list-depends --separator=,)
 fi
 
+if [[ "$ODOO_VERSION" == "19.0" ]]; then
+    WITHOUT_DEMO="--without-demo="
+else
+    WITHOUT_DEMO="--without-demo=all"
+fi
+
 unbuffer $(which odoo) \
-  --without-demo \
+  ${WITHOUT_DEMO} \
   -d ${PGDATABASE} \
   -i ${ADDONS:-base} \
   --http-interface=127.0.0.1 \
