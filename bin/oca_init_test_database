@@ -16,7 +16,7 @@ else
 fi
 
 if [[ "$ODOO_VERSION" == "19.0" ]]; then
-    WITHOUT_DEMO="--without-demo="
+    WITHOUT_DEMO="--without-demo"
 else
     WITHOUT_DEMO="--without-demo=all"
 fi
