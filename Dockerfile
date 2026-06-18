@@ -131,7 +131,12 @@ RUN SHA=$(jq -r .object.sha /tmp/branch.json) \
 # latest version works with all versions of Odoo that we support here, and the
 # oldest pinned in Odoo's requirements.txt don't have wheels, and don't build
 # anymore with the latest cython.
-RUN sed -i -E "s/^(gevent|greenlet)==.*/\1/" /tmp/ocb-requirements.txt \
+# We also unpin cryptography and pyopenssl: Odoo pins the ancient pair
+# cryptography==3.4.8 / pyopenssl==21.0.0 for python<3.12, which breaks as soon
+# as any addon dependency upgrades cryptography (pyopenssl 21 references
+# _lib.GEN_EMAIL, removed in cryptography>=35). The latest pair is mutually
+# compatible and modern pyopenssl caps cryptography itself, keeping it consistent.
+RUN sed -i -E "s/^(gevent|greenlet|cryptography|pyopenssl)==.*/\1/" /tmp/ocb-requirements.txt \
  && pip install --no-cache-dir \
       -r /tmp/ocb-requirements.txt \
       packaging
