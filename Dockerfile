@@ -131,15 +131,24 @@ RUN SHA=$(jq -r .object.sha /tmp/branch.json) \
 # latest version works with all versions of Odoo that we support here, and the
 # oldest pinned in Odoo's requirements.txt don't have wheels, and don't build
 # anymore with the latest cython.
-# We also unpin cryptography and pyopenssl: Odoo pins the ancient pair
-# cryptography==3.4.8 / pyopenssl==21.0.0 for python<3.12, which breaks as soon
-# as any addon dependency upgrades cryptography (pyopenssl 21 references
-# _lib.GEN_EMAIL, removed in cryptography>=35). The latest pair is mutually
-# compatible and modern pyopenssl caps cryptography itself, keeping it consistent.
-RUN sed -i -E "s/^(gevent|greenlet|cryptography|pyopenssl)==.*/\1/" /tmp/ocb-requirements.txt \
+RUN sed -i -E "s/^(gevent|greenlet)==.*/\1/" /tmp/ocb-requirements.txt \
  && pip install --no-cache-dir \
       -r /tmp/ocb-requirements.txt \
       packaging
+
+# For python<3.12 Odoo pins an ancient TLS stack (cryptography 3.4.8 / pyopenssl
+# 21 / urllib3 1.26.5 / requests 2.25.1) that is internally consistent but breaks
+# the moment an addon dependency upgrades cryptography: pyopenssl<22 hits
+# "_lib.GEN_EMAIL" and urllib3<2 imports "cryptography.hazmat.backends.openssl.x509",
+# both removed in modern cryptography. Install the coherent modern set Odoo itself
+# uses for python>=3.12 (Noble); pyopenssl 24.1.0 caps cryptography<43 so downstream
+# addon installs can't drag it to an incompatible version.
+RUN pip install --no-cache-dir \
+      "cryptography==42.0.8" \
+      "pyopenssl==24.1.0" \
+      "urllib3==2.0.7" \
+      "requests==2.31.0" \
+      "idna==3.6"
 
 # Install other test requirements.
 # - coverage
