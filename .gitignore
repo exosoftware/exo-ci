@@ -2,3 +2,6 @@ __pycache__
 .pytest_cache
 *.pyc
 /.idea/
+
+# local dev composition
+docker-compose.override.yml

@@ -28,24 +28,35 @@ jobs:
             odoo_version: "16.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo16.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "17.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo17.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "18.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo18.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "19.0"
             odoo_org_repo: "odoo/odoo"
             image_name: py3.10-odoo19.0
+            build_deps: "setuptools-odoo wheel whool"
+          - python_version: "3.12"
+            codename: noble
+            chrome_milestone: 139
+            odoo_version: "20.0"
+            odoo_org_repo: "odoo/odoo"
+            image_name: py3.12-odoo20.0
+            build_deps: "whool"
           # oca/ocb
           - python_version: "3.10"
             codename: jammy
@@ -53,27 +64,38 @@ jobs:
             odoo_version: "16.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb16.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "17.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb17.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "18.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb18.0
+            build_deps: "setuptools-odoo wheel whool"
           - python_version: "3.10"
             codename: jammy
             chrome_milestone: 139
             odoo_version: "19.0"
             odoo_org_repo: "oca/ocb"
             image_name: py3.10-ocb19.0
+            build_deps: "setuptools-odoo wheel whool"
+          - python_version: "3.12"
+            codename: noble
+            chrome_milestone: 139
+            odoo_version: "20.0"
+            odoo_org_repo: "oca/ocb"
+            image_name: py3.12-ocb20.0
+            build_deps: "whool"
     services:
       postgres:
-        image: postgres:12
+        image: postgres:${{ matrix.test_postgres_version || '16' }}
         env:
           POSTGRES_USER: odoo
           POSTGRES_PASSWORD: odoo
@@ -98,6 +120,7 @@ jobs:
             python_version=${{ matrix.python_version }}
             odoo_version=${{ matrix.odoo_version }}
             odoo_org_repo=${{ matrix.odoo_org_repo }}
+            build_deps=${{ matrix.build_deps }}
           tags: |
             ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest
           labels: |
@@ -112,15 +135,17 @@ jobs:
         # Don't bother with Odoo 8 and 9 for now...
         if: ${{ matrix.odoo_version != '8.0' && matrix.odoo_version != '9.0' }}
       - name: Chrome version
-        run: docker run ghcr.io/oca/oca-ci/${{ matrix.image_name }}:latest /opt/chrome-linux64/chrome --version
+        run: docker run ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest /opt/chrome-linux64/chrome --version
       - name: Push image
         uses: docker/build-push-action@v6
         with:
           build-args: |
             codename=${{ matrix.codename }}
+            chrome_milestone=${{ matrix.chrome_milestone }}
             python_version=${{ matrix.python_version }}
             odoo_version=${{ matrix.odoo_version }}
             odoo_org_repo=${{ matrix.odoo_org_repo }}
+            build_deps=${{ matrix.build_deps }}
           tags: |
             ghcr.io/exosoftware/exo-ci/${{ matrix.image_name }}:latest
           labels: |

@@ -9,7 +9,7 @@ compatibility. ⚠️
 
 These images provide the following guarantees:
 
-- Odoo runtime dependencies are installed (`wkhtmltopdf`, `lessc`, etc).
+- Odoo runtime dependencies are installed depending on version(`wkhtmltopdf`, `lessc`, `paper-muncher`, etc).
 - Odoo source code is in `/opt/odoo`.
 - Odoo is installed in editable mode in a virtualenv isolated from system python packages.
 - The Odoo configuration file exists at `$ODOO_RC`.
@@ -36,9 +36,8 @@ Environment variables:
 - `INCLUDE=`
 - `EXCLUDE=`
 - `OCA_GIT_USER_NAME=oca-ci`: git user name to commit `.pot` files
-- `OCA_GIT_USER_EMAIL=oca-ci@odoo-community.org`: git user email to commit
-- `OCA_ENABLE_CHECKLOG_ODOO=`: enable odoo log error checking
-  `.pot` files
+- `OCA_GIT_USER_EMAIL=oca-ci@odoo-community.org`: git user email to commit `.pot` files
+- `OCA_ENABLE_CHECKLOG_ODOO=`: enable Odoo log error checking
 
 Available commands:
 
@@ -60,10 +59,11 @@ Available commands:
 
 Build args:
 
-- python_version (no default)
-- odoo_version (no default)
+- python_version (no default, e.g. 3.10)
+- odoo_version (no default, e.g. 19.0)
 - codename (default: focal)
 - odoo_org_repo (default: odoo/odoo)
+- chrome_milestone (default: 126)
 
 ## Tests
 
